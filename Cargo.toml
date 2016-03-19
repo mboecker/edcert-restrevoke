@@ -1,0 +1,17 @@
+[package]
+name = "edcert-restrevoke"
+version = "0.1.0"
+authors = [ "Marvin Böcker <marvin.boecker@udo.edu>" ]
+
+description = "A crate for a REST-based revoke infrastructure for Edcert Certificates."
+repository = "https://github.com/zombiemuffin/edcert-restrevoke/"
+documentation = "https://zombiemuffin.github.io/edcert-restrevoke/edcert-restrevoke/"
+readme = "README.md"
+keywords = ["rest", "revoke", "cryptography", "security", "edcert"]
+license = "MIT"
+
+[dependencies]
+chrono = "^0.2"
+edcert = "^4.0"
+hyper = "~0.8"
+rustc-serialize = "^0.3"
