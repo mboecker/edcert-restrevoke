@@ -20,8 +20,8 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-use edcert::certificate::Certificate;
 use edcert::certificate_validator::Revoker;
+use edcert::certificate_validator::Validatable;
 
 /// This Revoker can be used for a REST query on the given revokeserver to query, if the
 /// Certificate is known to be revoked.
@@ -44,14 +44,14 @@ impl RestRevoker {
     }
 }
 
-impl Revoker<Certificate> for RestRevoker {
-    fn is_revoked(&self, cert: &Certificate) -> Result<(), &'static str> {
+impl Revoker for RestRevoker {
+    fn is_revoked<T: Validatable>(&self, cert: &T) -> Result<(), &'static str> {
         use hyper::Client;
         use std::io::Read;
         use rustc_serialize::json::Json;
 
         // get the bytestring of the public key
-        let bytestr = cert.public_key.to_bytestr();
+        let bytestr = cert.get_id();
 
         // create a new hyper client
         let client = Client::new();

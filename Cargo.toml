@@ -12,6 +12,6 @@ license = "MIT"
 
 [dependencies]
 chrono = "^0.2"
-edcert = "^4.0"
+edcert = "^4.1"
 hyper = "~0.8"
 rustc-serialize = "^0.3"
