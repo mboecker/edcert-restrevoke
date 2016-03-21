@@ -1,5 +1,5 @@
 [package]
-name = "edcert_restrevoke"
+name = "edcert-restrevoke"
 version = "0.1.2"
 authors = [ "Marvin Böcker <marvin.boecker@udo.edu>" ]
 
