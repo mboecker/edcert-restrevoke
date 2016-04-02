@@ -20,8 +20,8 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-use edcert::certificate_validator::Revoker;
-use edcert::certificate_validator::Validatable;
+use edcert::revoker::Revoker;
+use edcert::validator::Validatable;
 
 /// This Revoker can be used for a REST query on the given revokeserver to query, if the
 /// Certificate is known to be revoked.
@@ -97,12 +97,12 @@ impl Revoker for RestRevoker {
 // #[test]
 // fn test_simple() {
 //     use edcert::certificate::Certificate;
-//     use edcert::certificate_validator::CertificateValidator;
+//     use edcert::root_validator::RootValidator;
 //     use edcert::meta::Meta;
 //     use chrono::UTC;
 //
 //     let mpk = [0; 32];
 //     let cert = Certificate::generate_random(Meta::new_empty(), UTC::now());
-//     let cv = CertificateValidator::new(&mpk, RestRevoker::new("xxx"));
+//     let cv = RootValidator::new(&mpk, RestRevoker::new("xxx"));
 //     assert_eq!(true, cv.is_revoked(&cert).is_ok());
 // }
