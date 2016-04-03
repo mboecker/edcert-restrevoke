@@ -51,7 +51,7 @@ impl Revoker for RestRevoker {
         use rustc_serialize::json::Json;
 
         // get the bytestring of the public key
-        let bytestr = cert.get_id();
+        let bytestr = cert.get_key_id();
 
         // create a new hyper client
         let client = Client::new();
