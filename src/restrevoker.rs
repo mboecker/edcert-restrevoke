@@ -84,9 +84,10 @@ impl Revoker for RestRevoker {
 
         // The response must contain a boolean value in it.
         if json.is_boolean() {
-            match json.as_boolean().unwrap() {
-                true => Err("The certificate has been revoked."),
-                false => Ok(()),
+            if json.as_boolean().unwrap() {
+                Err("The certificate has been revoked.")
+            } else {
+                Ok(())
             }
         } else {
             Err("Invalid JSON")
