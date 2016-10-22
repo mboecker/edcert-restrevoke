@@ -21,7 +21,8 @@
 // SOFTWARE.
 
 use edcert::revoker::Revoker;
-use edcert::validator::Validatable;
+use edcert::revoker::Revokable;
+use edcert::revoker::RevokeError;
 
 /// This Revoker can be used for a REST query on the given revokeserver to query, if the
 /// Certificate is known to be revoked.
@@ -45,19 +46,19 @@ impl RestRevoker {
 }
 
 impl Revoker for RestRevoker {
-    fn is_revoked<T: Validatable>(&self, cert: &T) -> Result<(), &'static str> {
+    fn is_revoked<T: Revokable>(&self, cert: &T) -> Result<(), RevokeError> {
         use hyper::Client;
         use std::io::Read;
         use rustc_serialize::json::Json;
 
-        // get the bytestring of the public key
-        let bytestr = cert.get_key_id();
+        // Get the certificate fingerprint.
+        let bytestr = cert.fingerprint();
 
         // create a new hyper client
         let client = Client::new();
 
         // create the request
-        let mut req = client.get(&format!("{}{}", self.revokeserver, bytestr))
+        let mut req = client.get(&format!("{}{:?}", self.revokeserver, &bytestr))
                             .send()
                             .expect("Failed to request");
 
@@ -73,24 +74,24 @@ impl Revoker for RestRevoker {
 
         let json: Json = match json {
             Ok(o) => o,
-            Err(_) => return Err("Failed to read JSON"),
+            Err(_) => return Err(RevokeError::ServerUnavailiable),
         };
 
         // The response must contain a field "revoked"
         let json = match json.find("revoked") {
             Some(o) => o,
-            None => return Err("Invalid JSON"),
+            None => return Err(RevokeError::ServerUnavailiable),
         };
 
         // The response must contain a boolean value in it.
         if json.is_boolean() {
             if json.as_boolean().unwrap() {
-                Err("The certificate has been revoked.")
+                Err(RevokeError::Revoked)
             } else {
                 Ok(())
             }
         } else {
-            Err("Invalid JSON")
+            Err(RevokeError::ServerUnavailiable)
         }
     }
 }
@@ -98,12 +99,10 @@ impl Revoker for RestRevoker {
 // #[test]
 // fn test_simple() {
 //     use edcert::certificate::Certificate;
-//     use edcert::root_validator::RootValidator;
 //     use edcert::meta::Meta;
 //     use chrono::UTC;
 //
-//     let mpk = [0; 32];
 //     let cert = Certificate::generate_random(Meta::new_empty(), UTC::now());
-//     let cv = RootValidator::new(&mpk, RestRevoker::new("xxx"));
-//     assert_eq!(true, cv.is_revoked(&cert).is_ok());
+//     let revoker = RestRevoker::new("https://api.rombie.de/v1/is_revoked?public_key=");
+//     assert_eq!(true, revoker.is_revoked(&cert).is_ok());
 // }

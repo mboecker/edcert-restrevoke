@@ -20,9 +20,16 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+//! This crate defines a `RestRevoker`. This is a configurable revoke client, which sends a
+//! request to the server via HTTP and parses the result as JSON. The server should return a
+//! JSON object with the key "revoked", which value should be a boolean.
+
+#![deny(missing_docs)]
+
 extern crate edcert;
 extern crate hyper;
 extern crate rustc_serialize;
 extern crate chrono;
 
+/// The main module. This contains the `RestRevoker`.
 pub mod restrevoker;
