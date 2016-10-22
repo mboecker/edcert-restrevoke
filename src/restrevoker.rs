@@ -52,13 +52,16 @@ impl Revoker for RestRevoker {
         use rustc_serialize::json::Json;
 
         // Get the certificate fingerprint.
-        let bytestr = cert.fingerprint();
+        let bytestr = {
+            let bytestr: Vec<String> = cert.fingerprint().iter().map(|b| format!("{:02X}", b)).collect();
+            bytestr.join("")
+        };
 
         // create a new hyper client
         let client = Client::new();
 
         // create the request
-        let mut req = client.get(&format!("{}{:?}", self.revokeserver, &bytestr))
+        let mut req = client.get(&format!("{}{}", self.revokeserver, &bytestr))
                             .send()
                             .expect("Failed to request");
 
@@ -96,13 +99,13 @@ impl Revoker for RestRevoker {
     }
 }
 
-// #[test]
-// fn test_simple() {
-//     use edcert::certificate::Certificate;
-//     use edcert::meta::Meta;
-//     use chrono::UTC;
-//
-//     let cert = Certificate::generate_random(Meta::new_empty(), UTC::now());
-//     let revoker = RestRevoker::new("https://api.rombie.de/v1/is_revoked?public_key=");
-//     assert_eq!(true, revoker.is_revoked(&cert).is_ok());
-// }
+#[test]
+fn test_simple() {
+    use edcert::certificate::Certificate;
+    use edcert::meta::Meta;
+    use chrono::UTC;
+
+    let cert = Certificate::generate_random(Meta::new_empty(), UTC::now());
+    let revoker = RestRevoker::new("https://api.rombie.de/v1/is_revoked?public_key=");
+    assert_eq!(true, revoker.is_revoked(&cert).is_ok());
+}
