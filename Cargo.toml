@@ -1,6 +1,6 @@
 [package]
 name = "edcert-restrevoke"
-version = "1.0.4"
+version = "1.0.5"
 authors = [ "Marvin Böcker <marvin.boecker@udo.edu>" ]
 
 description = "A crate for a REST-based revoke infrastructure for Edcert Certificates."
